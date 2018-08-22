@@ -1,12 +1,18 @@
 import os
 import omdb
 import json
+import urllib.request
 from datetime import datetime
 
 omdb.set_default('apikey', 'faaae6b8')
+path = 'C:\Movies'
+
+def downloader(image_url, file_name, path):
+    file_name = file_name
+    full_file_name = path + '\\' + str(file_name) + '.jpg'
+    urllib.request.urlretrieve(image_url,full_file_name)
 
 def movies_from_folder():
-    path = 'C:\Movies'
 
     list_for_erase = ['5.1', '7.1', '5 1', '7 1', 'DUAL AUDIO', 'DUAL-AUDIO', 'MULTI-CHANNEL', 'Ita-Eng',
                       '2160p', '4K', '1080p', '720p', '480p', '360p', 'HD', 'FULL HD', 'FULLHD',
@@ -16,7 +22,8 @@ def movies_from_folder():
     files = []
     clear_files = []
     for file in os.listdir(path):
-        files.append(file)
+        if os.path.isfile(path+'\\'+file):
+            files.append(file)
 
     for title in files:
         for word in list_for_erase:
@@ -39,10 +46,22 @@ def search_movies(movies, parameter):
              release_date = datetime.strftime(objDate, '%d.%m.%Y')
              popularity = int(data['imdbVotes'].replace(',', ''))
              length = int((data['Runtime'].split())[0])
-             movies_to_seach.append({'Title': data['Title'], 'Release date': release_date, 'Rating': data['imdbRating'], 'Popularity' : popularity, 'Length' : length})
+             title = data['Title']
+             movies_to_seach.append({'Title':title, 'Release date': release_date, 'Rating': data['imdbRating'], 'Popularity' : popularity, 'Length' : length})
 
-     if parameter != 'null':
-         movies_to_seach = sorted(movies_to_seach, key=lambda k: k[parameter], reverse=False)
+             movie_folder_name = title.replace(':', ' ').replace('?', ' ')
+             movie_folder_path = path + '\\' + movie_folder_name
+             if not os.path.exists(movie_folder_path):
+                os.makedirs(movie_folder_path)
+             poster = data['Poster']
+             downloader(poster, movie_folder_name, movie_folder_path)
+
+             file = open(movie_folder_path + "\\" + movie_folder_name + ".txt", "w")
+             file.write(str(json.dumps(data, indent=4)))
+             file.close()
+
+         if parameter != 'null':
+            movies_to_seach = sorted(movies_to_seach, key=lambda k: k[parameter], reverse=False)
 
      for movie in movies_to_seach:
         print(str(movie).replace("'", " "))
