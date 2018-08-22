@@ -36,7 +36,7 @@ def search_movies(movies, parameter):
          else:
              release_date = data['Released']
              objDate = datetime.strptime(release_date, '%d %b %Y')
-             release_date = datetime.strftime(objDate, '%d-%m-%Y')
+             release_date = datetime.strftime(objDate, '%d.%m.%Y')
              popularity = int(data['imdbVotes'].replace(',', ''))
              length = int((data['Runtime'].split())[0])
              movies_to_seach.append({'Title': data['Title'], 'Release date': release_date, 'Rating': data['imdbRating'], 'Popularity' : popularity, 'Length' : length})
