@@ -23,10 +23,11 @@ def movies_from_folder():
             title = title.replace(word, "")
         title = os.path.splitext(title)[0]
         clear_files.append(title.strip())
+
     return clear_files
 
-def search_movies(movies, _sorting_type):
-     _movies = []
+def search_movies(movies, parameter):
+     movies_to_seach = []
      for title in movies:
          res = omdb.request(t=title, r='json')
          data = json.loads(res.content)
@@ -38,12 +39,12 @@ def search_movies(movies, _sorting_type):
              release_date = datetime.strftime(objDate, '%d-%m-%Y')
              popularity = int(data['imdbVotes'].replace(',', ''))
              length = int((data['Runtime'].split())[0])
-             _movies.append({'Title': data['Title'], 'Release date': release_date, 'Rating': data['imdbRating'], 'Popularity' : popularity, 'Length' : length})
+             movies_to_seach.append({'Title': data['Title'], 'Release date': release_date, 'Rating': data['imdbRating'], 'Popularity' : popularity, 'Length' : length})
 
      if parameter != 'null':
-         _movies = sorted(_movies, key=lambda k: k[_sorting_type], reverse=False)
+         movies_to_seach = sorted(movies_to_seach, key=lambda k: k[parameter], reverse=False)
 
-     for movie in _movies:
+     for movie in movies_to_seach:
         print(str(movie).replace("'", " "))
 
 def sorting_type(user_input):
@@ -74,6 +75,7 @@ def input_decision():
             return 'F'
         if (user_input == 'M'):
             return  'M'
+
 if input_decision() == 'M':
     movies_with_parameter = input_movies()
     parameter = sorting_type(movies_with_parameter[-1])
