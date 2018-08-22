@@ -4,15 +4,13 @@ import json
 from datetime import datetime
 
 omdb.set_default('apikey', 'faaae6b8')
-parameter=''
 
 def movies_from_folder():
     path = 'C:\Movies'
 
     list_for_erase = ['5.1', '7.1', '5 1', '7 1', 'DUAL AUDIO', 'DUAL-AUDIO', 'MULTI-CHANNEL', 'Ita-Eng',
                       '2160p', '4K', '1080p', '720p', '480p', '360p', 'HD', 'FULL HD', 'FULLHD',
-                      'x264', 'CH', 'X264', 'HEVC'
-                                            'WEB-DL', 'BrRip', 'Rip', 'DVDRip', 'XviD', 'BLURAY',
+                      'x264', 'CH', 'X264', 'HEVC', 'WEB-DL', 'BrRip', 'Rip', 'DVDRip', 'XviD', 'BLURAY',
                       'EXTENDED', 'REMASTERED', 'DIRECTORS', 'UNRATED', 'AlTERNATE', 'DVD']
 
     files = []
@@ -84,5 +82,5 @@ if input_decision() == 'M':
 else:
     movies = movies_from_folder()
     parameter = 'null'
-print(movies)
+
 search_movies(movies, parameter)
