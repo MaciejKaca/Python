@@ -1,7 +1,7 @@
 import os
 import omdb
 import json
-import datetime
+from datetime import datetime
 
 omdb.set_default('apikey', 'faaae6b8')
 parameter=''
@@ -11,11 +11,15 @@ def search_movies(movies, _sorting_type):
      for title in movies:
          res = omdb.request(t=title, r='json')
          data = json.loads(res.content)
-         #data = (json.dumps(data, indent=4))
-
-         release_date = datetime.datetime.strptime(data['Released'], '%d %b %Y').date()
-
-         _movies.append({'Title': data['Title'], 'Released': release_date, 'Rating': data['imdbRating']})
+         if 'Error' in data:
+             print('Movie not found!')
+         else:
+             release_date = data['Released']
+             objDate = datetime.strptime(release_date, '%d %b %Y')
+             release_date = datetime.strftime(objDate, '%d-%m-%Y')
+             popularity = int(data['imdbVotes'].replace(',', ''))
+             length = int((data['Runtime'].split())[0])
+             _movies.append({'Title': data['Title'], 'Release date': release_date, 'Rating': data['imdbRating'], 'Popularity' : popularity, 'Length' : length})
 
      if parameter != 'null':
          _movies = sorted(_movies, key=lambda k: k[_sorting_type], reverse=False)
@@ -25,7 +29,7 @@ def search_movies(movies, _sorting_type):
 
 def sorting_type(user_input):
     sorting_type = user_input.split(' : ')
-    if sorting_type[-1] == "Rating" or sorting_type[-1] == "Release date":
+    if sorting_type[-1] == "Rating" or sorting_type[-1] == "Release date" or sorting_type[-1] == "Length" or sorting_type[-1] == "Popularity":
         return(sorting_type[-1])
     else:
         return 'null'
@@ -44,7 +48,6 @@ def input_movies():
         for titles in user_input:
             movies.append(titles)
     return movies
-        #print(json.dumps(data, indent=4).replace("\"", " ").replace(",", " "))
 
 movies_with_parameter = input_movies()
 parameter = sorting_type(movies_with_parameter[-1])
@@ -52,5 +55,3 @@ movies = movies_with_parameter
 movies[-1] = (movie_without_parameter(movies_with_parameter[-1]))
 
 search_movies(movies, parameter)
-
-#search_movies(input_movies(), 'null')
